@@ -1,47 +1,60 @@
 #!/usr/bin/python
-#
-from operator import is_
-import sys, os, time, platform
+import sys
+import os
+import time
+import platform
 import tkinter
 import tkinter.messagebox
 import tkinter.filedialog
 import tkinter.font
 import hashlib  # sha1
-# import logging
-# import difflib
 import filecmp
 import binascii
 import shutil
 import re
 import subprocess
-from subprocess import Popen, PIPE
+import inspect
+import __main__ as main
+from ToolTip import ToolTip
 
 sys.path.append('auxfiles')
 sys.path.append('..' + os.sep + 'DougModules')
 
-import __main__ as main
-from inspect import currentframe as CF
-from inspect import getframeinfo as GFI
-from send2trash import send2trash
-from ToolTip import ToolTip
-import MultiListbox
+# from subprocess import Popen, PIPE
+# import logging
+# import difflib
+# from send2trash import send2trash
+# import MultiListbox
 import DougModules
 from DougModules import SearchPath
 from DougModules import MyTrace
-# from DougModules import MyMessageBox
-
 from DougModules import Logger
-from DougModules import SetUpLogger
 from DougModules import ParseCommandLine
 from DougModules import StartFile
-# from DougModules import FileStats
 from DougModules import DiskSpace
 from DougModules import RemoveAFile
 # from DougModules import ShowResize
+# from DougModules import MyMessageBox
+# from DougModules import FileStats
 
 Main = tkinter.Tk()
 from PyDiffTkVars import Vars
 Vars.ProgramVersionNumber.set('1.0.0')
+
+debugFile = "PyDiffTk.txt"
+if os.path.exists(debugFile):
+    os.remove(debugFile)
+
+
+def line_info(message="nothing", show=False):
+    f = inspect.currentframe()
+    i = inspect.getframeinfo(f.f_back)
+    tString = f"{os.path.basename(i.filename)}:{i.lineno}  called from {i.function}  {message}\n"
+    file1 = open(debugFile, "a")
+    file1.write(tString)
+    file1.close()
+    if show:
+        print(tString)
 
 
 # ------------------------------
@@ -101,19 +114,18 @@ def StartUpStuff():
     Vars.AuxDirectoryVar.set(os.path.join(Vars.StartUpDirectoryVar.get(), 'auxfiles', '.'))
     Vars.HelpFileVar.set(os.path.join(Vars.AuxDirectoryVar.get(), 'PyDiffTk.hlp'))
     Vars.LogFileNameVar.set(os.path.join(Vars.StartUpDirectoryVar.get(), 'PyDiffTk.log'))
-    SetUpLogger(Vars.LogFileNameVar.get())
 
-    Logger(MyTrace(GFI(CF())), str(os.environ.get('OS')))
-    Logger(MyTrace(GFI(CF())), str(platform.uname()), MyTrace(GFI(CF())))
-    Logger(MyTrace(GFI(CF())), 'Number of argument(s): ' + str(len(sys.argv)))
-    Logger(MyTrace(GFI(CF())), 'Argument List: ' + str(sys.argv))
+    line_info(' '.join(["OS:", str(os.environ.get('OS'))]))
+    line_info(' '.join(["uname:", str(platform.uname())]))
+    line_info(' '.join(["Number of argument(s):", str(len(sys.argv))]))
+    line_info(' '.join(['Argument List: ', str(sys.argv)]))
     ProjectLoad('default')  # Now get the project settings
 
 
 # ------------------------------
 # This updates the ShowLineNumberVar label
 def Update():
-    Logger(MyTrace(GFI(CF())))
+    line_info('Update')
     Vars.ShowLineNumberVar.set(str(Vars.DataBox.curselection()) + ' of ' + str(Vars.DataBox.size() - 1))
     Vars.DataBoxTooltipVar = str(Vars.DataBox.curselection())
     Vars.BatchNumberItemsVar.set(str(Vars.DataBox.curselection()) + ' of ' + str(Vars.DataBox.size() - 1))
@@ -124,11 +136,10 @@ def Update():
 # x is a junk parameter
 # Displays Vars.SelectedListVar by updating DataBox
 def ShowSelectedList(x=''):
-    Logger(MyTrace(GFI(CF())))
+    line_info('Update')
     # if Vars.BatchBlockMode.get(): return
     Vars.DataBox.selection_clear(0, 99999)
     for x in Vars.SelectedListVar:
-        print(MyTrace(GFI(CF())), x)
         Vars.DataBox.selection_set(x)
         Vars.DataBox.see(x)
     Update()
@@ -139,14 +150,16 @@ def ShowSelectedList(x=''):
 # x is a junk parameter
 # Adds any selected rows to Vars.SelectedListVar and updates DataBox
 def AddSelectedToList(x=''):
-    Logger(MyTrace(GFI(CF())))
-    if Vars.BatchBlockMode.get(): return
+    line_info('AddSelectedToList')
+    if Vars.BatchBlockMode.get():
+        return
     # Get the currently selected index
     Current = str(Vars.DataBox.curselection())
     # Clean it up and extend to the list
     Current = re.sub('[(),\']', '', Current)
 
-    if len(Current) < 1: return  # Nothing is selected so abort
+    if len(Current) < 1:
+        return  # Nothing is selected so abort
 
     tmp = Current.split(' ')
     Vars.SelectedListVar.extend(tmp)
@@ -169,8 +182,8 @@ def AddSelectedToList(x=''):
 # ------------------------------
 # Will Remove a row from Vars.SelectedListVar and the Databox
 def RemoveARow():
-    Logger(MyTrace(GFI(CF())))
-    tkinter.messagebox.showerror('RemoveARow' ,'Not ready yet\n' + str(MyTrace(GFI(CF()))))
+    line_info('RemoveARow')
+    tkinter.messagebox.showerror('RemoveARow', 'Not ready yet')
     Update()
 
 
@@ -179,7 +192,7 @@ def RemoveARow():
 # x is a junk parameter
 # Clears Vars.SelectedListVar and the Databox
 def ClearSelectedList(x=''):
-    Logger(MyTrace(GFI(CF())))
+    line_info('ClearSelectedList')
     Vars.SelectedListVar = []
     Vars.DataBox.selection_clear(0, tkinter.END)
     Vars.StartRowEntry.delete(0, tkinter.END)
@@ -188,13 +201,12 @@ def ClearSelectedList(x=''):
 
 
 # ------------------------------
-if __name__ == '__main__':
+if __name__ == '__main__':  # noqa: C901
 
-
-# ------------------------------
+    # ------------------------------
     # This clears everything, terminal, GUI etc.
     def ClearAll():
-        Logger(MyTrace(GFI(CF())))
+        line_info('ClearAll')
         Vars.FileRenameTopLevelVar.withdraw()
         Vars.FileInfoTopLevelVar.withdraw()
         Vars.OptionsTopLevelVar.withdraw()
@@ -205,7 +217,7 @@ if __name__ == '__main__':
 
 # ------------------------------
     def UpdatePathEntry(trace, Path):
-        Logger(MyTrace(GFI(CF())), 'UpdatePathEntry ' + trace + ' ' + Path)
+        line_info(' '.join(['UpdatePathEntry', trace, Path]))
         if os.path.isdir(Path):
             if not os.path.isdir(Path) or not os.access(Path, os.W_OK):
                 tkinter.messagebox.showinfo('UpdatePathEntry error',
@@ -233,18 +245,20 @@ if __name__ == '__main__':
     # Null search is not allowed
     # Type is search or select
     def SearchData(Mode, SearchType):
-        Logger(MyTrace(GFI(CF())), 'SearchData ' + Mode + '  ' + SearchType,
-            PrintToCommandLine=True)
+        line_info(os.linesep.join(['SearchData', Mode, SearchType]))
         Vars.DataBox.selection_clear(0, Vars.DataBox.size())
         if Mode == 'main':
             DataToFind = Vars.SearchEntryMain.get()
         if Mode == 'batch':
             DataToFind = Vars.SearchEntryBatch.get()
-        if len(DataToFind) < 1: return  # No null searches
-        if Vars.CaseSearchVar.get(): DataToFind = DataToFind.upper()
+        if len(DataToFind) < 1:
+            return  # No null searches
+        if Vars.CaseSearchVar.get():
+            DataToFind = DataToFind.upper()
 
-        if 'select' in SearchType: Vars.SearchRowStart = 0
-        for x in range(Vars.SearchRowStart,Vars.DataBox.size()):
+        if 'select' in SearchType:
+            Vars.SearchRowStart = 0
+        for x in range(Vars.SearchRowStart, Vars.DataBox.size()):
             Found = False
             DataToTest = Vars.DataBox.get(x)
             if Vars.CaseSearchVar.get():
@@ -273,7 +287,7 @@ if __name__ == '__main__':
 
 # ------------------------------
     def ResetSearchData():
-        Logger(MyTrace(GFI(CF())))
+        line_info('ResetSearchData')
         Vars.DataBox.selection_clear(0, Vars.DataBox.size())
         Vars.DataBox.see(0)
         Vars.SearchRowStart = 0
@@ -281,13 +295,14 @@ if __name__ == '__main__':
 # ------------------------------
 # Quit the program
     def Quit():
-        Logger(MyTrace(GFI(CF())))
+        line_info('Quit')
         if tkinter.messagebox.askyesno('Quit', 'Really quit?'):
             Main.destroy()
             sys.exit(0)
 
 # ------------------------------
     def GetType(FileName):
+        line_info(' '.join(['GetType:', FileName]))
         tmp = ''
         if os.path.isfile(FileName):
             tmp = 'File, '
@@ -303,10 +318,10 @@ if __name__ == '__main__':
 
 # ------------------------------
     def FetchDirectories(Trace):
+        line_info(' '.join(['FetchDirectories:', Trace]))
         dir_opt = options = {}
         Vars.DoNotAskNumberOfFilesVar.set(False)
         if Trace == 'Both':
-            Logger(MyTrace(GFI(CF())), Trace)
             Vars.DataBox.delete(0, tkinter.END)
             Vars.FileRenameTopLevelVar.withdraw()
             Vars.FileInfoTopLevelVar.withdraw()
@@ -342,11 +357,11 @@ if __name__ == '__main__':
             return str(sha1file(FileName))
         else:
             tkinter.messagebox.showerror('GetCheckSum(FileName) error',
-            'Invalid checksum type\n' +
-            'Values from 1 to 3 are valid\n' +
-            Vars.ProjectFileNameVar.get() + '\n' +
-            str(Vars.CheckSumAutoVar.get()) + '\n' +
-            str(Vars.CheckSumTypeVar.get()))
+                                         os.linesep.join(['Invalid checksum type',
+                                                          'Values from 1 to 3 are valid',
+                                                          Vars.ProjectFileNameVar.get(),
+                                                          str(Vars.CheckSumAutoVar.get()),
+                                                          str(Vars.CheckSumTypeVar.get())]))
             raise SystemExit
             return 0
 
@@ -356,7 +371,7 @@ if __name__ == '__main__':
     def SplashScreen(Message, Show):
         if Show:  # Display the splashscreen and disable the button
             FetchDataButton.config(state=tkinter.DISABLED)
-            Vars.SplashTopLevelVar = Toplevel(Main)
+            Vars.SplashTopLevelVar = tkinter.Toplevel(Main)
             Vars.SplashTopLevelVar.title(Message)
 
             Main.update()
@@ -388,7 +403,7 @@ if __name__ == '__main__':
     # ------------------------------
     def FetchData():
         SplashScreen('FetchData is running', True)
-        Logger(MyTrace(GFI(CF())))
+        line_info('FetchData')
 
         DataBoxCurrentLine = re.sub("[^0-9]", "", str(Vars.DataBox.curselection()))
         Vars.DataBox.delete(0, tkinter.END)
@@ -408,7 +423,9 @@ if __name__ == '__main__':
         LeftNumberOfFiles = len([item for item in os.listdir(Vars.LeftPathEntry.get()) if os.path.isfile(os.path.join(Vars.LeftPathEntry.get(), item))])
         RightNumberOfFiles = len([item for item in os.listdir(Vars.RightPathEntry.get()) if os.path.isfile(os.path.join(Vars.RightPathEntry.get(), item))])
         ActualTotalFiles = LeftNumberOfFiles + RightNumberOfFiles
-        Logger(MyTrace(GFI(CF())), 'Disable stuff: ' + str(ActualTotalFiles) + '   ' + str(Vars.TriggerNumberOfFilesVar.get()))
+        line_info(' '.join(['Disable stuff:',
+                            str(ActualTotalFiles),
+                            str(Vars.TriggerNumberOfFilesVar.get())]))
 
         # Decide to disable autorefresh and/or checksum
         if (ActualTotalFiles > Vars.TriggerNumberOfFilesVar.get()) and not Vars.DoNotAskNumberOfFilesVar.get():
@@ -487,11 +504,11 @@ if __name__ == '__main__':
                 for s in new1:
                     if s.upper() == key and value > 0 and Vars.FilterEntry.get().upper() in s.upper():
                         Vars.DataBox.insert(tkinter.END, (s, '', 'Diff', 'Diff'))
-                        Logger(MyTrace(GFI(CF())), 'Show diff new1: ' + s)
+                        line_info(' '.join(['Show diff new1: ', s]))
                 for s in new2:
                     if s.upper() == key and value > 0 and Vars.FilterEntry.get().upper() in s.upper():
                         Vars.DataBox.insert(tkinter.END, ('', s, 'Diff', 'Diff'))
-                        Logger(MyTrace(GFI(CF())), 'Show diff new2: ' + s)
+                        line_info(' '.join(['Show diff new2: ', s]))
 
         Vars.StatusVar.set('Compare complete. Items: ' + str(Vars.DataBox.size() - 1))
         Vars.ShowLineNumberVar.set('No line selected of ' + str(Vars.DataBox.size() - 1))
@@ -501,7 +518,7 @@ if __name__ == '__main__':
             Vars.DataBox.selection_set(DataBoxCurrentLine)
             Vars.DataBox.see(DataBoxCurrentLine)
         except Exception as e:
-            print(str(e))
+            line_info(str(e))
             Vars.DataBox.selection_set(0)
             Vars.DataBox.see(0)
 
@@ -527,7 +544,7 @@ if __name__ == '__main__':
         try:
             sha1.update(f.read())
         except Exception as e:
-            Logger(MyTrace(GFI(CF())), 'whoops ' + str(e))
+            line_info(' '.join(['whoops', str(e)]))
         finally:
             f.close()
         return sha1.hexdigest()
@@ -539,10 +556,10 @@ if __name__ == '__main__':
     def CopyAFile(Trace, src, dst, IsBatch):
         if os.path.isdir(dst):
             dst = os.path.join(dst, "")
-        Logger(MyTrace(GFI(CF())), 'Trace: %s SRC:%s DST:%s IsBatch:%d' % (Trace, src, dst, IsBatch))
+        line_info('Trace: % s SRC: % s DST: % s IsBatch: % d' % (Trace, src, dst, IsBatch))
         # errors = []
         if os.path.isdir(src):
-            Logger(MyTrace(GFI(CF())), src + ' is directory')
+            line_info(' '.join([src, ' is directory']))
             if tkinter.messagebox.askyesno(Trace, 'Copy directory tree?\n' + src + ' \nto\n ' + dst):
                 try:
                     Logger(MyTrace(GFI(CF())), dst + os.path.basename(src))

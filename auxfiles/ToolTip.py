@@ -1,16 +1,17 @@
 #!/usr/bin/python
-
 import tkinter
 from tkinter import *
 #------------------------------
 
+
 class ToolTip:
+
     def __init__(self, master, text='Your text here', delay=250, **opts):
         self.master = master
-        self._opts = {'anchor':'center', 'bd':1, 'bg':'orange', 'delay':delay, 'fg':'black',\
-                      'follow_mouse':1, 'font':None, 'justify':'left', 'padx':4, 'pady':2,\
-                      'relief':'solid', 'state':'normal', 'text':text, 'textvariable':None,\
-                      'width':0, 'wraplength':150}
+        self._opts = {'anchor': 'center', 'bd': 1, 'bg': 'orange', 'delay': delay, 'fg': 'black',
+                      'follow_mouse': 1, 'font': None, 'justify': 'left', 'padx': 4, 'pady': 2,
+                      'relief': 'solid', 'state': 'normal', 'text': text, 'textvariable': None,
+                      'width': 0, 'wraplength': 150}
         self.configure(**opts)
         self._tipwindow = None
         self._id = None
@@ -27,7 +28,7 @@ class ToolTip:
             if self._opts.has_key(key):
                 self._opts[key] = opts[key]
             else:
-                KeyError = 'KeyError: Unknown option: "%s"' %key
+                KeyError = 'KeyError: Unknown option: "%s"' % key
                 raise KeyError
 
     ##----these methods handle the callbacks on "<Enter>", "<Leave>" and "<Motion>"---------------##
@@ -70,7 +71,8 @@ class ToolTip:
             tw.wm_overrideredirect(1)
 
             if tw.tk.call("tk", "windowingsystem") == 'aqua':
-                tw.tk.call("::tk::unsupported::MacWindowStyle", "style", tw._w, "help", "none")
+                tw.tk.call("::tk::unsupported::MacWindowStyle",
+                           "style", tw._w, "help", "none")
 
             self.create_contents()
             tw.update_idletasks()
@@ -91,7 +93,8 @@ class ToolTip:
         # otherwise when the mouse enters the tip window we get
         # a leave event and it disappears, and then we get an enter
         # event and it reappears, and so on forever :-(
-        # or we take care that the mouse pointer is always outside the tipwindow :-)
+        # or we take care that the mouse pointer is always outside the
+        # tipwindow :-)
         tw = self._tipwindow
         twx, twy = tw.winfo_reqwidth(), tw.winfo_reqheight()
         w, h = tw.winfo_screenwidth(), tw.winfo_screenheight()
@@ -125,6 +128,6 @@ if __name__ == '__main__':
     tk = Tk()
     tst = Label(tk, text='This is a test of the tooltip module')
     tst.pack()
-    ToolTip(tst,'You should see a tooltip')
+    ToolTip(tst, 'You should see a tooltip')
 
     tk.mainloop()
