@@ -1,0 +1,33 @@
+PyDiffTk.py project file linux
+#All lines with # in the first column are comments
+#All line that do not contain ~ are comments
+#Comments are always stored starting at line 2 in the project file
+
+LeftPathEntry~/home/douglas/dbkaynor@gmail.com/Google Photos
+RightPathEntry~/home/douglas/Pictures
+FilterEntry~
+SearchEntryMain~B Tri
+SearchEntryBatch~
+LeftSearchVar~True
+RightSearchVar~True
+StatusSearchVar~False
+MoreSearchVar~False
+CaseSearchVar~False
+SystemEditorVar~gedit
+SystemLocaterVar~dolphin
+SystemDifferVar~meld
+SystemRenamerVar~/usr/bin/pyrenamer
+ShowRightCheckVar~True
+ShowLeftCheckVar~True
+ShowBothCheckVar~False
+ShowDiffCheckVar~True
+ShowDirectoriesCheckVar~True
+AutoRefreshCheckVar~False
+ConfirmCopyCheckVar~False
+ConfirmRenameCheckVar~True
+ConfirmDeleteCheckVar~True
+RecycleCheckVar~True
+CheckSumAutoVar~False
+CheckSumTypeVar~2
+FileTimeTriggerScaleVar~100
+TriggerNumberOfFilesVar~100

@@ -1,0 +1,23 @@
+DougPyDiff.py:2193  called from BuildOptionsForm  BuildOptionsForm
+DougPyDiff.py:2013  called from BuildBatchForm  Batch
+DougPyDiff.py:308  called from ParseCommandLine  debug is off
+DougPyDiff.py:330  called from SetDefaults  SetDefaults
+DougPyDiff.py:364  called from StartUpStuff  StartUpStuff
+DougPyDiff.py:382  called from StartUpStuff  OS: Windows_NT
+DougPyDiff.py:383  called from StartUpStuff  uname: uname_result(system='Windows', node='dbkaynox-mobl4', release='10', version='10.0.19044', machine='AMD64')
+DougPyDiff.py:384  called from StartUpStuff  Number of argument(s): 1
+DougPyDiff.py:385  called from StartUpStuff  Argument List:  ['c:\\Users\\dbkaynox\\DougPython\\DougPyDiff\\DougPyDiff.py']
+DougPyDiff.py:1500  called from ProjectLoad  ProjectLoad default
+DougPyDiff.py:1514  called from ProjectLoad  Project LoadC:\Users\dbkaynox\DougPython\DougPyDiff\PyDiffTk.prjw
+DougPyDiff.py:491  called from UpdatePathEntry  UpdatePathEntry Left C:\Users\dbkaynox\DougPython\tst01
+DougPyDiff.py:491  called from UpdatePathEntry  UpdatePathEntry Right C:\Users\dbkaynox\DougPython\tst02
+DougPyDiff.py:1624  called from ProjectLoad  File does not exist:
+C:\Program Files (x86)\Ant Renamer\Renamer.exe
+DougPyDiff.py:1630  called from ProjectLoad  Project opened: C:\Users\dbkaynox\DougPython\DougPyDiff\PyDiffTk.prjw
+DougPyDiff.py:680  called from FetchData  FetchData
+DougPyDiff.py:2541  called from <module>  System editor: c:\windows\notepad.exe
+DougPyDiff.py:2542  called from <module>  System differ: C:\Program Files (x86)\WinMerge\WinMergeU.exe
+DougPyDiff.py:2543  called from <module>  System renamer: C:\Program Files (x86)\Ant Renamer\Renamer.exe
+DougPyDiff.py:392  called from Update  Update
+DougPyDiff.py:680  called from FetchData  FetchData
+DougPyDiff.py:392  called from Update  Update

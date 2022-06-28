@@ -314,7 +314,6 @@ def Logger(
     if PrintToTerminal:
         print(mystr)
 
-
 # ------------------------------
 
 def ShowResize(TraceString, Item):
@@ -323,6 +322,7 @@ def ShowResize(TraceString, Item):
         GeometryVar = Item.geometry()
         #print(TraceString + ': ' + GeometryVar)
         return TraceString + ': ' + GeometryVar
+
 
 # ------------------------------
 # Parse the command line
