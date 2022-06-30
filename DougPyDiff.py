@@ -80,9 +80,10 @@ CaseSearchVar = tkinter.BooleanVar()
 BatchBlockMode = tkinter.BooleanVar()
 BatchNumberItemsVar = tkinter.StringVar()
 ProgramVersionNumber.set('1.0.0')
-StartUpDirectory = os.path.split(sys.argv[0])[0]
-# HelpFileVar.set(os.path.join(StartUpDirectoryVar.get(), 'DougPyDiff.hlp'))
 
+StartUpDirectory = os.path.split(sys.argv[0])[0]
+os.chdir(StartUpDirectory)
+# HelpFileVar.set(os.path.join(StartUpDirectoryVar.get(), 'DougPyDiff.hlp'))
 debugFile = os.path.join(StartUpDirectory, "DougPyDiff.txt")
 if os.path.exists(debugFile):
     os.remove(debugFile)
@@ -1505,7 +1506,7 @@ if __name__ == '__main__':  # noqa: C901
         else:
             ProjectFileNameVar.set(tkinter.filedialog.askopenfilename(
                                    defaultextension=ProjectFileExtensionVar.get(),
-                                   filetypes=[('Project file', ''.join(['PyDiff*.',
+                                   filetypes=[('Project file', ''.join(['DougPyDiff*.',
                                                                         ProjectFileExtensionVar.get()]),
                                               ('All files', '*.*'))],
                                    initialdir=os.path.dirname(StartUpDirectoryVar.get()),
